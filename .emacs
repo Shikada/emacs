@@ -101,6 +101,8 @@ With argument ARG, do this that many times."
 ;; Normal (non-dired) search commands also limit themselves to file names only
 (setq dired-isearch-filenames t)
 
+(setq omnisharp-server-executable-path "D://GitRepo//omnisharp-roslyn//artifacts//publish//OmniSharp//default//net451//")
+
 ;; Handle identation like Visual Studio does
 ;; Turn on subword-mode
 (defun my-csharp-mode-hook ()
