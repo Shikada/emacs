@@ -1,7 +1,8 @@
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(global-set-key [(C tab)] 'buffer-menu)
+(global-set-key [(C-S-tab)] 'buffer-menu)
+(global-set-key [(C-tab)] 'other-window)
 (setq ring-bell-function 'ignore)
 
 (setq package-enable-at-startup nil)
@@ -163,3 +164,5 @@ With argument ARG, do this that many times."
   (my-split-root-window size 'right))
 
 (global-set-key (kbd "C-x M-3") `my-split-root-window-right)
+
+(global-set-key (kbd "C-x g") `magit-status)
