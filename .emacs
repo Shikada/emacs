@@ -1,3 +1,13 @@
+;; This will be changed frequently and depending on machine
+(setq default-directory "D:/GitRepo/")
+
+;; Adding some thing to PATH is necessary in Windows for some functionality to work
+(setenv "PATH"
+  (concat
+   ;; Change this with your path to MSYS bin directory
+   "C:\\Users\\o.munjin\\.babun\\cygwin\\bin;" ;; this fixed find command not working (for example when using find-name-dired)
+   (getenv "PATH")))
+
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
