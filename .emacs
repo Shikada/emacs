@@ -14,6 +14,8 @@
 (global-set-key [(C-S-tab)] 'buffer-menu)
 (global-set-key [(C-tab)] 'other-window)
 (setq ring-bell-function 'ignore)
+(global-set-key [(?\M-p)] 'scroll-down-line)
+(global-set-key [(?\M-n)] 'scroll-up-line)
 
 (setq package-enable-at-startup nil)
 (package-initialize)
