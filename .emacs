@@ -65,6 +65,16 @@
 ;; Don't show splash screen, emacs starts directly in scratch buffer
 (setq inhibit-splash-screen t)
 
+;; revert buffers automatically when underlying files are changed externally
+(global-auto-revert-mode t)
+
+;; reduce the frequency of garbage collection by making it happen on
+;; each 50MB of allocated data (the default is on every 0.76MB)
+(setq gc-cons-threshold 50000000)
+
+;; highlight the current line
+(global-hl-line-mode +1)
+
 (use-package color-theme-sanityinc-tomorrow
   :config
   (load-theme 'sanityinc-tomorrow-night t))
@@ -112,7 +122,7 @@
 
 (use-package ivy
   :config
-  (ivy-mode 1))
+  (ivy-mode -1)) ;; can't use ivy on Windows because you can't switch drive letters in find-file
 
 (use-package swiper
   :bind ("C-s" . swiper))
@@ -167,7 +177,7 @@ With argument ARG, do this that many times."
 (require `subword)
 (define-key subword-mode-map (kbd "C-<backspace>") `backward-delete-subword)
 
-(global-set-key (kbd "C-<backspace>") ` backward-delete-word)
+(global-set-key (kbd "C-<backspace>") `backward-delete-word)
 (global-set-key (kbd "M-<backspace>") `backward-kill-word)
 
 ;; When at end of buffer going to next line (C-n) will add new lines
