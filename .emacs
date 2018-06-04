@@ -2,7 +2,7 @@
 (global-set-key (kbd "C-c c") (lambda() (interactive)(find-file user-init-file)))
 
 ;; This will be changed frequently and depending on machine
-(setq default-directory "D:/repos/")
+(setq default-directory "E:/repos/")
 
 ;; Adding some thing to PATH is necessary in Windows for some functionality to work
 (setenv "PATH"
@@ -43,6 +43,10 @@
 (set-default-font "Consolas 12")
 (electric-pair-mode t)
 (show-paren-mode t)
+(global-set-key (kbd "C-c .") `xref-find-definitions-other-window)
+;; Need to override keybinding in cc-mode, since it sets it to c-set-style
+(require `cc-mode)
+(define-key c-mode-map (kbd "C-c .") `xref-find-definitions-other-window)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -54,7 +58,7 @@
     ("12b4427ae6e0eef8b870b450e59e75122d5080016a9061c9696959e50d578057" "ac2b1fed9c0f0190045359327e963ddad250e131fbf332e80d371b2e1dbc1dc4" "ad950f1b1bf65682e390f3547d479fd35d8c66cafa2b8aa28179d78122faa947" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "cdbd0a803de328a4986659d799659939d13ec01da1f482d838b68038c1bb35e8" "4f5bb895d88b6fe6a983e63429f154b8d939b4a8c581956493783b2515e22d6d" "a0feb1322de9e26a4d209d1cfa236deaf64662bb604fa513cca6a057ddf0ef64" "04dd0236a367865e591927a3810f178e8d33c372ad5bfef48b5ce90d4b476481" "7153b82e50b6f7452b4519097f880d968a6eaf6f6ef38cc45a144958e553fbc6" default)))
  '(package-selected-packages
    (quote
-    (swiper ivy paren-face aggressive-indent aggressive-indent-mode paredit csharp-mode use-package color-theme-sanityinc-tomorrow))))
+    (haskell-mode magit swiper ivy paren-face aggressive-indent aggressive-indent-mode paredit csharp-mode use-package color-theme-sanityinc-tomorrow))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -127,6 +131,8 @@
 (use-package swiper
   :bind ("C-s" . swiper))
 
+(use-package haskell-mode)
+
 ;; Activate Wind Move if available.
 ;; Allows moving between windows with shitft + arrow key
 (when (fboundp 'windmove-default-keybindings)
@@ -138,9 +144,9 @@
   (winner-mode 1))
 
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
-    (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
-    (global-set-key (kbd "S-C-<down>") 'shrink-window)
-    (global-set-key (kbd "S-C-<up>") 'enlarge-window)
+(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "S-C-<down>") 'shrink-window)
+(global-set-key (kbd "S-C-<up>") 'enlarge-window)
 
 ;; Always use truncated lines instead of line wraping
 ;; and set smoother horizontal scrolling
@@ -150,11 +156,11 @@
 
 ;; Smooth scrolling
 (setq redisplay-dont-pause t
-  scroll-margin 1
-  scroll-step 1
-  scroll-conservatively 10000
-  scroll-preserve-screen-position 1
-  mouse-wheel-progressive-speed nil)
+      scroll-margin 1
+      scroll-step 1
+      scroll-conservatively 10000
+      scroll-preserve-screen-position 1
+      mouse-wheel-progressive-speed nil)
 
 ;; Saves the clipboard before doing kill, so if you copy something
 ;; from another program and then kill something you can get it by
@@ -220,17 +226,18 @@ With argument ARG, do this that many times."
 
 ;; Splits the root window, so it adds new windows in relation to all
 ;; already existing windows, in the desired direction, as well as
-;; switching focus to the new window
+;; making all windows balanced and switching focus to the new window
 (defun my-split-root-window (size direction)
-  (progn
-    (split-window (frame-root-window)
-		  (and size (prefix-numeric-value size))
-		  direction)
-    (other-window 1)))
+  (let ((new-window (split-window (frame-root-window)
+				  (and size (prefix-numeric-value size))
+				  direction)))
+    (balance-windows-area)
+    (select-window new-window)))
 
 ;; Useful when there are, for example, two vertical windows and we need a new
-;; horizontal window that is above both of them
+;; horizontal window that is below both of them
 (defun my-split-root-window-below (&optional size)
+  "Create a new window below all current windows."
   (interactive "P")
   (my-split-root-window size 'below))
 
@@ -239,7 +246,31 @@ With argument ARG, do this that many times."
 ;; Useful when there are, for example, two horizontal windows and we need a new
 ;; vertical window that is to the right of both of them
 (defun my-split-root-window-right (&optional size)
+  "Create a new window to the left of all current windows."
   (interactive "P")
   (my-split-root-window size 'right))
 
 (global-set-key (kbd "C-x M-3") `my-split-root-window-right)
+
+;; Very useful for actions that create buffers in another window. Usually you would
+;; have to switch to it in order to quit it (usually by pressing 'q'). This is just
+;; a shortcut for those two actions
+(defun quit-other-window ()
+  "Switch to other window and quit that window."
+  (interactive)
+  (other-window 1)
+  (quit-window))
+
+(global-set-key (kbd "C-x K") `quit-other-window)
+
+(require `xref)
+
+(defun xref-goto-xref-same-window ()
+  "Jump to the xref on the current line while staying on the same window."
+  (interactive)
+  (let ((xref (xref--item-at-point)))
+    (xref--pop-to-location xref)))
+
+(define-key xref--button-map (kbd "C-m") `xref-goto-xref-same-window)
+(define-key xref--xref-buffer-mode-map (kbd "<C-return>") `xref-goto-xref)
+
