@@ -2,7 +2,7 @@
 (global-set-key (kbd "C-c c") (lambda() (interactive)(find-file user-init-file)))
 
 ;; This will be changed frequently and depending on machine
-(setq default-directory "E:/repos/")
+(setq default-directory "D:/repos/")
 
 ;; Adding some thing to PATH is necessary in Windows for some functionality to work
 (setenv "PATH"
@@ -58,7 +58,7 @@
     ("12b4427ae6e0eef8b870b450e59e75122d5080016a9061c9696959e50d578057" "ac2b1fed9c0f0190045359327e963ddad250e131fbf332e80d371b2e1dbc1dc4" "ad950f1b1bf65682e390f3547d479fd35d8c66cafa2b8aa28179d78122faa947" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "cdbd0a803de328a4986659d799659939d13ec01da1f482d838b68038c1bb35e8" "4f5bb895d88b6fe6a983e63429f154b8d939b4a8c581956493783b2515e22d6d" "a0feb1322de9e26a4d209d1cfa236deaf64662bb604fa513cca6a057ddf0ef64" "04dd0236a367865e591927a3810f178e8d33c372ad5bfef48b5ce90d4b476481" "7153b82e50b6f7452b4519097f880d968a6eaf6f6ef38cc45a144958e553fbc6" default)))
  '(package-selected-packages
    (quote
-    (haskell-mode magit swiper ivy paren-face aggressive-indent aggressive-indent-mode paredit csharp-mode use-package color-theme-sanityinc-tomorrow))))
+    (csharp-mode doom-themes haskell-mode magit swiper ivy paren-face aggressive-indent aggressive-indent-mode paredit use-package color-theme-sanityinc-tomorrow))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -79,9 +79,13 @@
 ;; highlight the current line
 (global-hl-line-mode +1)
 
-(use-package color-theme-sanityinc-tomorrow
-  :config
-  (load-theme 'sanityinc-tomorrow-night t))
+(use-package color-theme-sanityinc-tomorrow)
+  
+(use-package doom-themes
+  :preface
+  (defvar region-fg nil) ; see https://github.com/hlissner/emacs-doom-themes/issues/166
+  :init
+  (load-theme 'doom-vibrant t))
 
 ;; Handle identation like Visual Studio does
 ;; Turn on subword-mode
@@ -273,4 +277,9 @@ With argument ARG, do this that many times."
 
 (define-key xref--button-map (kbd "C-m") `xref-goto-xref-same-window)
 (define-key xref--xref-buffer-mode-map (kbd "<C-return>") `xref-goto-xref)
+
+(defun recompile-packages ()
+  "Recompiles everything in emacs.d/elpa folder."
+  (interactive)
+  (byte-recompile-directory package-user-dir nil 'force))
 
