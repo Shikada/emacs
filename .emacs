@@ -44,10 +44,13 @@
 (electric-pair-mode t)
 (show-paren-mode t)
 (global-set-key (kbd "C-c .") `xref-find-definitions-other-window)
+(delete-selection-mode t)
+
 ;; Need to override keybinding in cc-mode, since it sets it to c-set-style
 (require `cc-mode)
 (define-key c-mode-map (kbd "C-c .") `xref-find-definitions-other-window)
 (global-display-line-numbers-mode t)
+(global-set-key (kbd "C-S-s") `isearch-forward-symbol-at-point)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -177,21 +180,25 @@
 ;; doing C-y and then M-y to cycle the kill ring to that entry
 (setq save-interprogram-paste-before-kill t)
 
+;; Define this command to use instead of backwawrd-kill-word.
+;; Difference is it doesn't copy anything to the kill-ring.
 (defun backward-delete-word (arg)
   "Delete characters backward until encountering the beginning of a word.
 With argument ARG, do this that many times."
   (interactive "p")
-  (delete-region (point) (progn (backward-word arg) (point))))
+  (delete-region (point) (progn (forward-same-syntax (- arg)) (point))))
 
+;; Same as backward-delete-word but for use in subword-mode and without
+;; -same-syntax as subword doesn't have an equivalent.
 (defun backward-delete-subword (arg)
   "Delete characters backward until encountering the beginning of a word.
 With argument ARG, do this that many times."
   (interactive "p")
   (delete-region (point) (progn (subword-backward arg) (point))))
 
-;; Make subword-mode work as expected when doing backward-delete-word (it doesn't implement it by default)
+;; Make subword-mode work like backward-delete-word (it doesn't implement it by default)
 (require `subword)
-(define-key subword-mode-map (kbd "C-<backspace>") `backward-delete-subword)
+(define-key subword-mode-map (kbd "C-S-<backspace>") `backward-delete-subword)
 
 (global-set-key (kbd "C-<backspace>") `backward-delete-word)
 (global-set-key (kbd "M-<backspace>") `backward-kill-word)
