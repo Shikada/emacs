@@ -16,6 +16,10 @@
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 
 (package-initialize)
+;; If a specific version of a package fails to load then probably newer descriptions need to be downloaded on this machine.
+;; This usually happens when transfering configuration between machines. When emacs start it might fail to download missing packages.
+;; This is a known issue with package.el and there are work arounds, but it would be better to switch to an alternative package manager.
+;; In the meantime, try running package-refresh-contents and restaring Emacs.
 
 ;; Bootstrap `use-package'
 ;; This is the only package we install manually like this, all other will be installed using use-package
