@@ -97,7 +97,8 @@
   (progn
     (setq tab-width 4
 	  indent-tabs-mode nil)
-    (subword-mode t)))
+    (subword-mode t)
+    (define-key csharp-mode-map (kbd "C-d") `duplicate-line)))
 
 (use-package csharp-mode
   :config
@@ -128,7 +129,9 @@
   (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
   (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
   (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-  (add-hook 'scheme-mode-hook           #'enable-paredit-mode))
+  (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+  (put 'paredit-backward-delete 'delete-selection 'supersede)
+  (put 'paredit-forward-delete 'delete-selection 'supersede))
 
 (use-package paren-face
   :config
@@ -300,3 +303,13 @@ With argument ARG, do this that many times."
   (interactive)
   (byte-recompile-directory package-user-dir nil 'force))
 
+(defun duplicate-line ()
+  "Insert a copy of the current line directly below it."
+  (interactive)
+  (move-beginning-of-line 1)
+  (kill-line)
+  (yank)
+  (newline)
+  (yank))
+
+(global-set-key (kbd "C-c C-d") `duplicate-line)
