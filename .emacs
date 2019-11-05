@@ -79,6 +79,8 @@
 
 ;; revert buffers automatically when underlying files are changed externally
 (global-auto-revert-mode t)
+;; revert dired buffers as well
+(setq global-auto-revert-non-file-buffers t)
 
 ;; reduce the frequency of garbage collection by making it happen on
 ;; each 50MB of allocated data (the default is on every 0.76MB)
@@ -86,6 +88,9 @@
 
 ;; highlight the current line
 (global-hl-line-mode +1)
+
+;; use word wraping for text and org modes
+(add-hook 'text-mode-hook #'visual-line-mode)
 
 (use-package color-theme-sanityinc-tomorrow)
   
