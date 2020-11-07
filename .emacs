@@ -8,7 +8,7 @@
 (setenv "PATH"
 	(concat
 	 ;; Change this with your path to MSYS bin directory
-	 "C:\\Users\\o.munjin\\.babun\\cygwin\\bin;" ;; this fixed find command not working (for example when using find-name-dired)
+	 "C:\\cygwin64\\bin;" ;; this fixed find command not working (for example when using find-name-dired)
 	 (getenv "PATH")))
 
 ;; Add melpa
@@ -367,4 +367,11 @@ With argument ARG, do this that many times."
   (newline)
   (yank))
 
-(global-set-key (kbd "C-c C-d") `duplicate-line)
+(global-set-key (kbd "C-c d") `duplicate-line)
+
+(defun org-summary-todo (n-done n-not-done)
+  "Switch entry to DONE when all subentries are done, to TODO otherwise."
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
