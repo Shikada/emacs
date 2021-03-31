@@ -36,6 +36,9 @@
 (setq use-package-always-ensure t)
 
 ;; Some basic configuration
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-language-environment 'utf-8)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
